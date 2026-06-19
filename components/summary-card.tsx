@@ -22,14 +22,23 @@ export function SummaryCard({ summary }: { summary: SummaryItem }) {
 
   return (
     <div className="glass flex flex-col gap-4 rounded-2xl p-5">
-      <div className="flex items-center gap-3">
-        <span className="grid size-9 place-items-center rounded-xl border border-glass-border bg-primary/10 text-primary">
+      <div className="flex items-start gap-3">
+        <span
+          className={`grid size-9 shrink-0 place-items-center rounded-xl border border-glass-border ${
+            isBlocker ? 'bg-pink/10 text-pink' : 'bg-primary/10 text-primary'
+          }`}
+        >
           <Icon className="size-4" />
         </span>
-        <h3 className="font-heading text-sm font-semibold tracking-wide text-foreground">
-          {summary.category}
-        </h3>
-        <span className="ml-auto text-xs text-muted-foreground">
+        <div className="min-w-0">
+          <h3 className="font-heading text-sm font-semibold tracking-wide text-foreground">
+            {summary.category}
+          </h3>
+          <p className="text-pretty text-xs leading-relaxed text-muted-foreground">
+            {summary.description}
+          </p>
+        </div>
+        <span className="ml-auto grid size-6 shrink-0 place-items-center rounded-full border border-glass-border bg-glass text-xs font-medium text-muted-foreground">
           {summary.items.length}
         </span>
       </div>

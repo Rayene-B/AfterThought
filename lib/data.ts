@@ -76,12 +76,14 @@ export const meetings: Meeting[] = [
 
 export type SummaryItem = {
   category: 'Decisions' | 'Deadlines' | 'Action Items' | 'Blockers' | 'Topics'
+  description: string
   items: string[]
 }
 
 export const meetingSummary: SummaryItem[] = [
   {
     category: 'Decisions',
+    description: 'Resolved and agreed by the room',
     items: [
       'Adopt the Liquid Glass design language across all surfaces',
       'Ship the meeting memory engine in the Q3 beta cohort',
@@ -90,6 +92,7 @@ export const meetingSummary: SummaryItem[] = [
   },
   {
     category: 'Deadlines',
+    description: 'Dates committed during the call',
     items: [
       'Design system handoff — Jun 24',
       'Beta invite emails — Jul 01',
@@ -98,6 +101,7 @@ export const meetingSummary: SummaryItem[] = [
   },
   {
     category: 'Action Items',
+    description: 'Owned tasks to follow up on',
     items: [
       'Maya to finalize the roadmap one-pager',
       'Devon to spike on real-time transcript indexing',
@@ -106,6 +110,7 @@ export const meetingSummary: SummaryItem[] = [
   },
   {
     category: 'Blockers',
+    description: 'Risks that need attention',
     items: [
       'Transcription latency above target on long calls',
       'Awaiting legal sign-off on data retention policy',
@@ -113,6 +118,7 @@ export const meetingSummary: SummaryItem[] = [
   },
   {
     category: 'Topics',
+    description: 'Themes discussed across the session',
     items: [
       'Roadmap prioritization',
       'Search relevance',

@@ -1,0 +1,179 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   AftrThought — Liquid Glass Design System
+   Neutral tones (black, charcoal, slate, silver)
+   Neon blue accent. Pink reserved ONLY for micro indicators.
+   ============================================================ */
+
+@theme inline {
+  --font-heading: var(--font-geist-sans), 'Geist Fallback';
+  --font-sans: var(--font-geist-sans), 'Geist Fallback';
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Brand-specific tokens */
+  --color-neon: var(--neon);
+  --color-neon-foreground: var(--neon-foreground);
+  --color-pink: var(--pink);
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 10px);
+  --radius-3xl: calc(var(--radius) + 18px);
+
+  /* Soft, smooth shadows */
+  --shadow-glass: 0 8px 32px -8px rgb(0 0 0 / 0.55), inset 0 1px 0 0 rgb(255 255 255 / 0.06);
+  --shadow-glow: 0 0 0 1px var(--neon-ring), 0 8px 40px -10px var(--neon-glow);
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Neutral charcoal/slate base */
+  --background: oklch(0.16 0.006 264);
+  --foreground: oklch(0.97 0.004 264);
+
+  --card: oklch(0.22 0.008 264);
+  --card-foreground: oklch(0.97 0.004 264);
+
+  --popover: oklch(0.2 0.008 264);
+  --popover-foreground: oklch(0.97 0.004 264);
+
+  /* Primary = neon blue */
+  --primary: oklch(0.7 0.16 248);
+  --primary-foreground: oklch(0.16 0.01 264);
+
+  --secondary: oklch(0.27 0.008 264);
+  --secondary-foreground: oklch(0.95 0.004 264);
+
+  --muted: oklch(0.27 0.008 264);
+  --muted-foreground: oklch(0.68 0.01 264);
+
+  --accent: oklch(0.3 0.012 264);
+  --accent-foreground: oklch(0.97 0.004 264);
+
+  --destructive: oklch(0.62 0.2 25);
+
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.7 0.16 248);
+
+  /* Brand tokens */
+  --neon: oklch(0.72 0.16 248);
+  --neon-foreground: oklch(0.16 0.01 264);
+  --neon-ring: oklch(0.72 0.16 248 / 0.35);
+  --neon-glow: oklch(0.72 0.16 248 / 0.45);
+  --pink: oklch(0.68 0.23 354);
+
+  --glass: oklch(1 0 0 / 4%);
+  --glass-border: oklch(1 0 0 / 10%);
+
+  --radius: 1rem;
+
+  /* Chart palette — neutrals + neon blue tints */
+  --chart-1: oklch(0.72 0.16 248);
+  --chart-2: oklch(0.62 0.12 248);
+  --chart-3: oklch(0.55 0.02 264);
+  --chart-4: oklch(0.42 0.015 264);
+  --chart-5: oklch(0.78 0.09 248);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(60rem 40rem at 15% -10%, oklch(0.72 0.16 248 / 0.1), transparent 60%),
+      radial-gradient(50rem 36rem at 95% 0%, oklch(0.6 0.12 280 / 0.08), transparent 55%);
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer components {
+  /* Liquid glass surface */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-glass);
+  }
+
+  /* Glass with a faint neon edge for interactive surfaces */
+  .glass-neon {
+    background: var(--glass);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid oklch(0.72 0.16 248 / 0.22);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .neon-glow {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Custom scrollbar for transcript / panels */
+@layer utilities {
+  .scroll-slim {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(1 0 0 / 0.18) transparent;
+  }
+  .scroll-slim::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scroll-slim::-webkit-scrollbar-thumb {
+    background: oklch(1 0 0 / 0.16);
+    border-radius: 9999px;
+  }
+}

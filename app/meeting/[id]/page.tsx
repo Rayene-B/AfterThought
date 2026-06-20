@@ -1,24 +1,70 @@
+'use client'
+
+import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ChevronRight, Calendar, Clock, Users, Network } from 'lucide-react'
-import { meetings, meetingSummary } from '@/lib/data'
+import { ChevronRight, Calendar, Clock, Users, Network, Loader2 } from 'lucide-react'
+import type { Meeting, SummaryItem } from '@/lib/data'
 import { SummaryCard } from '@/components/summary-card'
 import { MindMapCanvas } from '@/components/mind-map-canvas'
 import { MeetingInsightsTranscript } from '@/components/meeting-insights-transcript'
 import { ParticipantStack } from '@/components/meeting-card'
 
-export function generateStaticParams() {
-  return meetings.map((m) => ({ id: m.id }))
-}
-
-export default async function MeetingDetailPage({
+export default function MeetingDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = await params
-  const meeting = meetings.find((m) => m.id === id)
-  if (!meeting) notFound()
+  const { id } = use(params)
+  const [meeting, setMeeting] = useState<Meeting | null>(null)
+  const [summaries, setSummaries] = useState<SummaryItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    async function loadMeetingDetails() {
+      try {
+        // Fetch meetings to find the current one
+        const meetingsRes = await fetch('/api/meetings')
+        const meetingsData = await meetingsRes.json()
+        
+        // Fetch summaries
+        const summaryRes = await fetch('/api/summary')
+        const summaryData = await summaryRes.json()
+        
+        if (meetingsData.ok && meetingsData.meetings) {
+          const found = meetingsData.meetings.find((m: any) => m.id === id)
+          setMeeting(found || null)
+          if (!found) {
+            setError(true)
+          }
+        } else {
+          setError(true)
+        }
+        if (summaryData.ok && summaryData.summaries) {
+          setSummaries(summaryData.summaries)
+        }
+      } catch (err) {
+        console.error('Failed to load meeting details', err)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadMeetingDetails()
+  }, [id])
+
+  if (loading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (error || !meeting) {
+    notFound()
+  }
 
   return (
     <div className="flex flex-col gap-10">
@@ -68,7 +114,7 @@ export default async function MeetingDetailPage({
           Summary
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {meetingSummary.map((s) => (
+          {summaries.map((s) => (
             <SummaryCard key={s.category} summary={s} />
           ))}
         </div>

@@ -1,17 +1,15 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import {
   BarChart3,
   Tags,
   GitCommitVertical,
   Users,
   SlidersHorizontal,
+  Loader2,
 } from 'lucide-react'
 import { InsightCard } from '@/components/insight-card'
-import {
-  topicFrequency,
-  topKeywords,
-  decisionTimeline,
-  peopleMentions,
-} from '@/lib/data'
 
 const sizeMap: Record<string, string> = {
   sm: 'text-sm text-muted-foreground',
@@ -22,11 +20,70 @@ const sizeMap: Record<string, string> = {
 
 const filters = ['Last 30 days', 'All participants', 'All topics']
 
+type TopicFrequencyItem = {
+  week: string
+  Roadmap: number
+  Pricing: number
+  Search: number
+}
+
+type KeywordItem = {
+  label: string
+  size: 'sm' | 'md' | 'lg' | 'xl'
+}
+
+type DecisionItem = {
+  date: string
+  title: string
+  meeting: string
+}
+
+type PeopleMentionItem = {
+  name: string
+  initials: string
+  mentions: number
+}
+
 export default function InsightsPage() {
+  const [topicFrequency, setTopicFrequency] = useState<TopicFrequencyItem[]>([])
+  const [topKeywords, setTopKeywords] = useState<KeywordItem[]>([])
+  const [decisionTimeline, setDecisionTimeline] = useState<DecisionItem[]>([])
+  const [peopleMentions, setPeopleMentions] = useState<PeopleMentionItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadInsights() {
+      try {
+        const res = await fetch('/api/insights')
+        const data = await res.json()
+        if (data.ok) {
+          setTopicFrequency(data.topicFrequency || [])
+          setTopKeywords(data.topKeywords || [])
+          setDecisionTimeline(data.decisionTimeline || [])
+          setPeopleMentions(data.peopleMentions || [])
+        }
+      } catch (err) {
+        console.error('Failed to load cross-meeting insights', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadInsights()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex h-96 items-center justify-center">
+        <Loader2 className="size-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
   const maxVal = Math.max(
     ...topicFrequency.flatMap((w) => [w.Roadmap, w.Pricing, w.Search]),
+    1 // fallback to prevent division by zero
   )
-  const maxMentions = Math.max(...peopleMentions.map((p) => p.mentions))
+  const maxMentions = Math.max(...peopleMentions.map((p) => p.mentions), 1)
 
   return (
     <div className="flex flex-col gap-8">
@@ -106,7 +163,7 @@ export default function InsightsPage() {
             {topKeywords.map((k) => (
               <span
                 key={k.label}
-                className={`${sizeMap[k.size]} cursor-default leading-none transition-colors hover:text-primary`}
+                className={`${sizeMap[k.size] || 'text-base text-foreground/80'} cursor-default leading-none transition-colors hover:text-primary`}
               >
                 {k.label}
               </span>

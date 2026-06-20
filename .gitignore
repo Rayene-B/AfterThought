@@ -13,3 +13,15 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+
+# Build artifacts — compiled outputs, not source
+extension/dist/
+desktop-app/dist/
+
+# Lock file (project uses pnpm — pnpm-lock.yaml is the canonical lock)
+package-lock.json
+
+# Editor / OS
+.vscode/
+*.log
+Thumbs.db

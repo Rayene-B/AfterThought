@@ -1,7 +1,10 @@
-import { Brain, Clock, Layers } from 'lucide-react'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { Brain, Clock, Layers, Loader2 } from 'lucide-react'
 import { SearchBar } from '@/components/search-bar'
 import { MeetingCard } from '@/components/meeting-card'
-import { meetings } from '@/lib/data'
+import type { Meeting } from '@/lib/data'
 
 const stats = [
   { icon: Layers, label: 'Meetings remembered', value: '128' },
@@ -10,6 +13,26 @@ const stats = [
 ]
 
 export default function DashboardPage() {
+  const [meetings, setMeetings] = useState<Meeting[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadMeetings() {
+      try {
+        const res = await fetch('/api/meetings')
+        const data = await res.json()
+        if (data.ok && data.meetings) {
+          setMeetings(data.meetings)
+        }
+      } catch (err) {
+        console.error('Failed to load meetings', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadMeetings()
+  }, [])
+
   return (
     <div className="flex flex-col gap-10">
       {/* Hero */}
@@ -64,11 +87,17 @@ export default function DashboardPage() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {meetings.map((m) => (
-            <MeetingCard key={m.id} meeting={m} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="size-8 animate-spin text-primary" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {meetings.map((m) => (
+              <MeetingCard key={m.id} meeting={m} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   )

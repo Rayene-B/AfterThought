@@ -994,9 +994,16 @@ export function SearchAIExperience({
                       : 'border-glass-border bg-glass opacity-55 grayscale hover:-translate-y-1 hover:border-primary/50 hover:bg-[radial-gradient(circle_at_top_right,rgba(47,123,255,0.16),transparent_40%),rgba(47,123,255,0.07)] hover:opacity-100 hover:grayscale-0 hover:shadow-[0_0_30px_rgba(47,123,255,0.20)]',
                   )}
                 >
-                  <button
-                    type="button"
-                    onClick={() => toggleMeeting(meeting.id)}
+                  <a
+                    href={
+                      selected
+                        ? buildSearchHref(basePath, undefined, undefined, sectionHash)
+                        : buildSearchHref(basePath, meeting.id, undefined, sectionHash)
+                    }
+                    onClick={(event) => {
+                      event.preventDefault()
+                      toggleMeeting(meeting.id)
+                    }}
                     className="block w-full text-left focus:outline-none"
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -1032,17 +1039,23 @@ export function SearchAIExperience({
                         {selected ? 'Click to unselect' : 'Click to select'}
                       </span>
                     </div>
-                  </button>
+                  </a>
 
                   {selected && (
-                    <button
-                      type="button"
-                      onClick={clearMeetingSelection}
-                      disabled={isThinking}
-                      className="mt-3 inline-flex h-9 w-full items-center justify-center rounded-xl border border-pink/25 bg-pink/10 text-xs font-semibold text-pink transition hover:bg-pink/15 disabled:cursor-not-allowed disabled:opacity-50"
+                    <a
+                      href={buildSearchHref(basePath, undefined, undefined, sectionHash)}
+                      onClick={(event) => {
+                        event.preventDefault()
+                        clearMeetingSelection()
+                      }}
+                      aria-disabled={isThinking}
+                      className={cn(
+                        'mt-3 inline-flex h-9 w-full items-center justify-center rounded-xl border border-pink/25 bg-pink/10 text-xs font-semibold text-pink transition hover:bg-pink/15',
+                        isThinking && 'pointer-events-none opacity-50',
+                      )}
                     >
                       Unselect meeting
-                    </button>
+                    </a>
                   )}
 
                   <details className="recent-transcript mt-3">

@@ -87,6 +87,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <br />
               Perfectly remembered.
             </p>
+            <p className="afterthought-credits">By Rayene &amp; Umar</p>
           </div>
         </div>
         <a href="#search" aria-label="Scroll to search" className="journey-scroll-cue">

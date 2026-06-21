@@ -898,20 +898,34 @@ export function SearchAIExperience({
   function selectMeeting(meetingId: string) {
     if (isThinking) return
 
-    if (meetingId === activeMeetingId) {
-      setActiveMeetingId('')
-      setAnswer('')
-      setResults([])
-      setSubmittedQuestion('')
-      updateSearchUrl()
-      return
-    }
+    if (meetingId === activeMeetingId) return
 
     setActiveMeetingId(meetingId)
     setAnswer('')
     setResults([])
     setSubmittedQuestion('')
     updateSearchUrl(meetingId)
+  }
+
+  function clearMeetingSelection() {
+    if (isThinking) return
+
+    setActiveMeetingId('')
+    setQuestion('create a summary')
+    setAnswer('')
+    setResults([])
+    setError('')
+    setSubmittedQuestion('')
+    updateSearchUrl()
+  }
+
+  function toggleMeeting(meetingId: string) {
+    if (meetingId === activeMeetingId) {
+      clearMeetingSelection()
+      return
+    }
+
+    selectMeeting(meetingId)
   }
 
   function stopThinking() {
@@ -982,7 +996,7 @@ export function SearchAIExperience({
                 >
                   <button
                     type="button"
-                    onClick={() => selectMeeting(meeting.id)}
+                    onClick={() => toggleMeeting(meeting.id)}
                     className="block w-full text-left focus:outline-none"
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -994,12 +1008,17 @@ export function SearchAIExperience({
                           {formatDate(meeting.created_at)}
                         </p>
                       </div>
-                      {selected && (
-                        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/15 px-2 py-1 text-[11px] font-medium text-primary">
-                          <CheckCircle2 className="size-3.5" />
-                          Selected
-                        </span>
-                      )}
+                      <span
+                        className={cn(
+                          'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] font-medium transition',
+                          selected
+                            ? 'border-primary/30 bg-primary/15 text-primary'
+                            : 'border-glass-border bg-background/30 text-muted-foreground',
+                        )}
+                      >
+                        {selected && <CheckCircle2 className="size-3.5" />}
+                        {selected ? 'Selected' : 'Select'}
+                      </span>
                     </div>
                     <p className="mt-3 line-clamp-3 text-xs leading-relaxed text-muted-foreground">
                       {meeting.summary || 'No summary yet.'}
@@ -1014,6 +1033,17 @@ export function SearchAIExperience({
                       </span>
                     </div>
                   </button>
+
+                  {selected && (
+                    <button
+                      type="button"
+                      onClick={clearMeetingSelection}
+                      disabled={isThinking}
+                      className="mt-3 inline-flex h-9 w-full items-center justify-center rounded-xl border border-pink/25 bg-pink/10 text-xs font-semibold text-pink transition hover:bg-pink/15 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Unselect meeting
+                    </button>
+                  )}
 
                   <details className="recent-transcript mt-3">
                     <summary>View full transcript</summary>

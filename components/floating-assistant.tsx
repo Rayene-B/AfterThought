@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import {
   Sparkles,
   X,
@@ -24,6 +25,7 @@ const liveActions = [
 ]
 
 export function FloatingAssistant() {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const dragRef = useRef<{ startX: number; startY: number; ox: number; oy: number } | null>(
@@ -43,6 +45,10 @@ export function FloatingAssistant() {
   }
   function onPointerUp() {
     dragRef.current = null
+  }
+
+  if (pathname === '/') {
+    return null
   }
 
   return (

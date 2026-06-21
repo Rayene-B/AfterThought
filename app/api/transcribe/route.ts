@@ -3,10 +3,9 @@ import { supabaseAdmin } from "@/lib/supabase"
 import { sendFollowUpEmail } from "@/lib/email"
 import { createCalendarEvent } from "@/lib/calendar"
 import { updateSpeakerProfile } from "@/lib/speakers"
+import { addLocalMeeting } from "@/lib/meeting-store"
 
 export async function POST(req: Request) {
-  const supabase = supabaseAdmin()
-
   try {
     const audio = await req.arrayBuffer()
 
@@ -33,6 +32,22 @@ export async function POST(req: Request) {
       "Prepare the proposal",
       "Schedule next meeting"
     ]
+
+    const localMeeting = {
+      id,
+      title: "New Recording",
+      summary,
+      action_items: actionItems,
+      segments,
+      created_at: new Date().toISOString(),
+    }
+
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      addLocalMeeting(localMeeting)
+      return NextResponse.json({ ok: true, id })
+    }
+
+    const supabase = supabaseAdmin()
 
     // --- SCAFFOLDING PLACEHOLDERS ---
     
@@ -65,10 +80,8 @@ export async function POST(req: Request) {
 
     if (error) {
       console.error(error)
-      return NextResponse.json(
-        { ok: false, error: error.message },
-        { status: 500 }
-      )
+      addLocalMeeting(localMeeting)
+      return NextResponse.json({ ok: true, id })
     }
 
     return NextResponse.json({ ok: true, id })

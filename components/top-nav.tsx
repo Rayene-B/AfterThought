@@ -7,16 +7,20 @@ import { cn } from '@/lib/utils'
 import { BrandLogo } from '@/components/brand-logo'
 
 const tabs = [
-  { label: 'Home', href: '/', icon: Home },
-  { label: 'Search', href: '/search', icon: Search },
-  { label: 'Insights', href: '/insights', icon: BarChart3 },
-  { label: 'Calendar', href: '/calendar', icon: Search }, // Reusing icon
+  { label: 'Home', href: '/#home', icon: Home },
+  { label: 'Search', href: '/#search', icon: Search },
+  { label: 'Insights', href: '/#insights', icon: BarChart3 },
+  { label: 'Calendar', href: '/#calendar', icon: Search }, // Reusing icon
   { label: 'Speakers', href: '/speakers', icon: Search }, // Reusing icon
   { label: 'Settings', href: '/settings', icon: Settings },
 ]
 
 export function TopNav() {
   const pathname = usePathname()
+
+  if (pathname === '/') {
+    return null
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 lg:px-8">
@@ -28,7 +32,9 @@ export function TopNav() {
         <div className="flex items-center gap-1">
           {tabs.map((tab) => {
             const active =
-              tab.href === '/' ? pathname === '/' : pathname.startsWith(tab.href)
+              tab.href.startsWith('/#')
+                ? pathname === '/'
+                : pathname.startsWith(tab.href)
             const Icon = tab.icon
             return (
               <Link
